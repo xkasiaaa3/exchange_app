@@ -18,7 +18,7 @@ class App(tk.CTk):
 
         self.geometry("500x300")
         self.title("Kursy walut")
-        self.minsize(1000, 1100)
+        self.minsize(1500, 1100)
 
         self.label = tk.CTkLabel(master=self, text="2. Wybierz walutę", width=120, height=25, fg_color="#57c1fa",
                                  corner_radius=8)
@@ -72,7 +72,7 @@ class App(tk.CTk):
         for item in data:
             dates.append(item['effectiveDate'])
             rates.append(item['mid'])
-        self.plotGraph(rates,  )
+        self.plotGraph(rates, dates)
         print("Wybrano opcję:", data)
 
 
