@@ -27,15 +27,15 @@ class App(tk.CTk):
 
         self.label12 = tk.CTkLabel(master=self, text="1. Wybierz datę początkową", width=120, height=25,
                                    fg_color="#57c1fa", corner_radius=8)
-        self.label12.grid(row=0, column=0, padx=50, pady=10)
+        self.label12.grid(row=0, column=0, padx=25, pady=10)
         self.cal = Calendar(self, selectmode='day', year=2023, month=4, day=5)
         self.cal.grid(row=1, column=0, columnspan=2, rowspan=5, padx=50)
 
         self.label2 = tk.CTkLabel(master=self, text="3. Wybierz datę końcową", width=120, height=25,
                                   fg_color=("#57c1fa"), corner_radius=8)
-        self.label2.grid(row=0, column=4)
+        self.label2.grid(row=0, column=4, padx=25)
         self.cal1 = Calendar(self, selectmode='day', year=2023, month=4, day=5)
-        self.cal1.grid(row=1, column=4, padx=20, columnspan=2, rowspan=5)
+        self.cal1.grid(row=1, column=4, padx=40, columnspan=2, rowspan=5)
 
         self.button = tk.CTkButton(master=self, text="Sprawdź kurs", command=self.getRates, width=120, height=100)
         self.button.grid(row=1, column=6, padx=20, pady=20, rowspan=5)
@@ -54,14 +54,15 @@ class App(tk.CTk):
         return nstring1
 
     def plotGraph(self, rates, dates):
+
         fig = plt.figure(figsize=(8, 4), dpi=100)
         ax = fig.add_subplot(111)
         ax.plot(dates, rates, linewidth=5)
         ax.set_xlabel(' ')
-        ax.set_ylabel('Kurs '+self.selected_currency.get())
+        plt.title('Kurs '+self.selected_currency.get())
         canvas = FigureCanvasTkAgg(fig, master=self)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=9, column=0, columnspan=6, pady=25, padx=50)
+        canvas.get_tk_widget().grid(row=6, column=0,  columnspan=8, pady=25, padx=50)
 
     def getRates(self):
         response = requests.get(
