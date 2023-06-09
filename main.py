@@ -3,6 +3,7 @@ import customtkinter as tk
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 
 
 class RadioButton(tk.CTkRadioButton):
@@ -46,7 +47,6 @@ class App(tk.CTk):
             radioButton = RadioButton(self, text=currency[i], variable=self.selected_currency, value=currency[i])
             radioButton.grid(row=i+1, column=3, sticky='ns')
 
-
     def changeString(self, string):
         nstring = string.split('/')
         nstring1 = '20' + nstring[2] + '-' + (nstring[0] if len(nstring[0]) == 2 else '0' + nstring[0]) + '-' + (
@@ -54,15 +54,27 @@ class App(tk.CTk):
         return nstring1
 
     def plotGraph(self, rates, dates):
-
         fig = plt.figure(figsize=(8, 4), dpi=100)
         ax = fig.add_subplot(111)
-        ax.plot(dates, rates, linewidth=5)
+        ax.plot(dates, rates, linewidth=5, label="Wartość kursu")
         ax.set_xlabel(' ')
-        plt.title('Kurs '+self.selected_currency.get())
+        plt.title('Kurs ' + self.selected_currency.get())
+
+        num_ticks = 6
+        xticks = np.linspace(0, len(dates) - 1, num_ticks, dtype=int)
+        xticklabels = [dates[idx] for idx in xticks]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(xticklabels)
+
+        average_rate = np.mean(rates)
+        average_line = [average_rate] * len(rates)
+        ax.plot(dates, average_line, color='red', linestyle='--', label='Średnia')
+
+        ax.legend()  # Add legend
+
         canvas = FigureCanvasTkAgg(fig, master=self)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=6, column=0,  columnspan=8, pady=25, padx=50)
+        canvas.get_tk_widget().grid(row=6, column=0, columnspan=8, pady=25, padx=50)
 
     def getRates(self):
         response = requests.get(
