@@ -3,7 +3,10 @@ import customtkinter as tk
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+from sklearn import linear_model
 import numpy as np
+from datetime import datetime, timedelta
 
 
 class RadioButton(tk.CTkRadioButton):
@@ -87,7 +90,27 @@ class App(tk.CTk):
             rates.append(item['mid'])
         self.plotGraph(rates, dates)
         print("Wybrano opcję:", data)
+        self.prediction(rates,dates)
 
+    def prediction(self,rates,dates):
+        lastDay = datetime.strptime(dates[-1], "%Y-%m-%d")
+        numeric_dates = []
+        string_dates = []
+        howMany = len(dates)
+        print(howMany)
+        for i in range(howMany):
+            next_day = lastDay + timedelta(days=i+1)
+            next_day_num = (next_day - datetime(1970, 1, 1)).total_seconds() / (24 * 60 * 60)
+            next_day_str = next_day.strftime("%Y-%m-%d")
+            numeric_dates.append(next_day_num)
+            string_dates.append(next_day_str)
+        y_train = np.array(rates)
+        x_train = np.array(numeric_dates).reshape(-1,1)
+        model = linear_model.LinearRegression()
+        model.fit(x_train, y_train)
+        y_pred = model.predict(x_train)
+        print(y_pred) # predicted rates
+        print(string_dates) # next days
 
 if __name__ == "__main__":
     app = App()
