@@ -22,7 +22,7 @@ class App(tk.CTk):
 
         self.geometry("500x300")
         self.title("Kursy walut")
-        self.minsize(1350, 700)
+        self.minsize(1450, 750)
 
         self.label = tk.CTkLabel(master=self, text="2. Wybierz walutę", width=120, height=25, fg_color="#57c1fa",
                                  corner_radius=8)
@@ -49,6 +49,24 @@ class App(tk.CTk):
         for i in range(len(currency)):
             radioButton = RadioButton(self, text=currency[i], variable=self.selected_currency, value=currency[i])
             radioButton.grid(row=i+1, column=3, sticky='ns')
+
+    def createInformation(self, rates,dates):
+        date_label = tk.CTkLabel(master=self, text="Kurs "+self.selected_currency.get()+" od "+dates[0]+" do "+ dates[len(dates)-1])
+        date_label.grid(row=7,column=0,columnspan=3)
+        max_label = tk.CTkLabel(master=self,
+                                 text="      Wartość maksymalna  " + self.selected_currency.get() + ": "+ str(max(rates))+"zł dnia: "+dates[rates.index(max(rates))])
+        max_label.grid(row=8, column=0,columnspan=3,padx=20)
+        min_label = tk.CTkLabel(master=self,
+                                text="  Wartość minimalna  " + self.selected_currency.get() + ": " + str(
+                                    min(rates)) + "zł dnia: " + dates[rates.index(min(rates))])
+        min_label.grid(row=9, column=0, columnspan=3,padx=20)
+
+        average_label = tk.CTkLabel(master=self,
+                                 text="   Średnia wartość " + self.selected_currency.get() + " : "+ str(np.mean(rates))+" zł" )
+        average_label.grid(row=10, column=0,columnspan=3,padx=20)
+
+
+
 
     def changeString(self, string):
         nstring = string.split('/')
@@ -79,6 +97,7 @@ class App(tk.CTk):
         canvas.draw()
         canvas.get_tk_widget().grid(row=row, column=column, columnspan=6,pady=50,padx=25)
 
+
     def getRates(self):
         response = requests.get(
             f"http://api.nbp.pl/api/exchangerates/rates/A/{self.selected_currency.get()}/{self.changeString(self.cal.get_date())}/{self.changeString(self.cal1.get_date())}/")
@@ -91,6 +110,8 @@ class App(tk.CTk):
         self.plotGraph(rates, dates, 6,0,'Kurs ')
         print("Wybrano opcję:", data)
         self.prediction(rates,dates)
+        self.createInformation(rates,dates)
+
 
     def prediction(self,rates,dates):
         lastDay = datetime.strptime(dates[-1], "%Y-%m-%d")
