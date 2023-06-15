@@ -22,7 +22,7 @@ class App(tk.CTk):
 
         self.geometry("500x300")
         self.title("Kursy walut")
-        self.minsize(1500, 1100)
+        self.minsize(1350, 700)
 
         self.label = tk.CTkLabel(master=self, text="2. Wybierz walutę", width=120, height=25, fg_color="#57c1fa",
                                  corner_radius=8)
@@ -56,12 +56,12 @@ class App(tk.CTk):
             nstring[1] if len(nstring[1]) == 2 else '0' + nstring[1])
         return nstring1
 
-    def plotGraph(self, rates, dates):
+    def plotGraph(self, rates, dates, row, column,title):
         fig = plt.figure(figsize=(8, 4), dpi=100)
         ax = fig.add_subplot(111)
         ax.plot(dates, rates, linewidth=5, label="Wartość kursu")
         ax.set_xlabel(' ')
-        plt.title('Kurs ' + self.selected_currency.get())
+        plt.title(title + self.selected_currency.get())
 
         num_ticks = 6
         xticks = np.linspace(0, len(dates) - 1, num_ticks, dtype=int)
@@ -77,7 +77,7 @@ class App(tk.CTk):
 
         canvas = FigureCanvasTkAgg(fig, master=self)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=6, column=0, columnspan=8, pady=25, padx=50)
+        canvas.get_tk_widget().grid(row=row, column=column, columnspan=6,pady=50,padx=25)
 
     def getRates(self):
         response = requests.get(
@@ -88,7 +88,7 @@ class App(tk.CTk):
         for item in data:
             dates.append(item['effectiveDate'])
             rates.append(item['mid'])
-        self.plotGraph(rates, dates)
+        self.plotGraph(rates, dates, 6,0,'Kurs ')
         print("Wybrano opcję:", data)
         self.prediction(rates,dates)
 
@@ -111,6 +111,7 @@ class App(tk.CTk):
         y_pred = model.predict(x_train)
         print(y_pred) # predicted rates
         print(string_dates) # next days
+        self.plotGraph(y_pred, string_dates, 6,6,'Przewidywany kurs ')
 
 if __name__ == "__main__":
     app = App()
